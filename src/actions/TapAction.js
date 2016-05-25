@@ -10,8 +10,8 @@ class TapAction extends Action {
     this._centerY = widget.centerY
   }
 
-  fire() {
-    this._device.click(this._centerX, this._centerY)
+  async fire() {
+    await this._device.click(this._centerX, this._centerY)
   }
 }
 

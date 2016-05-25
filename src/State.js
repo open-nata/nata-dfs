@@ -6,8 +6,7 @@ class State {
     this._widgets = widgets
     this._actions = actions
 
-    this._kind = this.Types.NORMAL
-
+    this._kind = State.Types.NORMAL
     this._fromEdge = null
     this._toEdge = []
 
@@ -55,7 +54,7 @@ class State {
   }
 
   isNotOver() {
-    return this.actionIndex < this.actions.length
+    return (this.actionIndex < this.actions.length)
   }
 
   get pkg() {

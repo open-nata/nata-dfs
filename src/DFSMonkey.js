@@ -19,11 +19,13 @@ class DFSMonkey extends Monkey {
     this.flag = true
   }
 
-  play() {
+  async play() {
     // start app
-    this.startApp()
+    console.log('start palying...')
+    await this.startApp()
     // record current state
-    this.rootState = this.getCurrentState()
+    this.rootState = await this.getCurrentState()
+    // console.log(this.rootState)
     this.curState = this.rootState
     this.addNode(this.rootState)
     // start loop
@@ -31,29 +33,29 @@ class DFSMonkey extends Monkey {
       const action = this.curState.getAction()
 
       if (action === null) {
-        this.flag = this.goBack()
+        this.flag = await this.goBack()
         continue
       }
 
       this.action.fire()
 
-      const tempNode = this.getCurrentState()
+      const tempNode = await this.getCurrentState()
 
       const kind = this.classifyNode(tempNode)
 
       switch (kind) {
         case State.Types.OLD:
         case State.Types.OUT:
-          this.currentActions.add(action)
+          this.currentActions.push(action)
           this.addNode(tempNode)
           this.curState = tempNode
-          this.flag = this.goBack()
+          this.flag = await this.goBack()
           break
         case State.Types.SAME:
           console.debug('same state')
           break
         default:
-          this.currentActions.add(action)
+          this.currentActions.push(action)
           this.addNode(tempNode)
           this.curState = tempNode
           console.debug('new state')
@@ -62,18 +64,18 @@ class DFSMonkey extends Monkey {
     }
   }
 
-  startApp() {
-    this.restartAction.fire()
+  async startApp() {
+    await this.restartAction.fire()
   }
 
-  restartApp() {
-    this.restartAction.fire()
+  async restartApp() {
+    await this.restartAction.fire()
     const rootPa = this.rootState.getAppPackage()
     const rootAct = this.rootState.getActivity()
     let count = 0
     const RESTART_TIME_LIMIT = 10
     while (count <= RESTART_TIME_LIMIT) {
-      this.wait(1000)
+      await this.wait(1000)
       if (rootPa === this.device.getCurrentPackageName()
         && rootAct === this.device.getCurrentActivity()) {
         break
@@ -83,13 +85,66 @@ class DFSMonkey extends Monkey {
     }
   }
 
-  wait(ms) {
-    this.device.sleep(ms)
+  async wait(ms) {
+    await this.device.sleep(ms)
   }
 
   // TODO
-  goBack() {
+  async goBack() {
+    const ee = this.curState.getFromEdge()
+    if (ee != null) {
+      this.curState = ee.getFromState()
 
+      while (!this.curState.isNotOver()
+              && this.curState.getFromEdge() !== null) {
+        this.curState = this.curState.getFromEdge().getFromState()
+      }
+
+      const nodesStack = []
+      const edgesStack = []
+
+      let tempState = this.curState
+      while (tempState.getFromEdge() != null) {
+        edgesStack.push(tempState.getFromEdge())
+        tempState = tempState.getFromEdge().getFromState()
+        nodesStack.push(tempState)
+      }
+
+      // attempt to one step back
+      if (edgesStack.length > 2) {
+        await this.backAction.fire()
+      }
+
+      tempState = await this.getCurrentState()
+
+      if (this.curState.equals(tempState)) {
+        return true
+      }
+
+      if (tempState != null && nodesStack.contains(tempState)) {
+        // this node is ancestor of current node
+        while (nodesStack.length !== 0
+          && !nodesStack.peekBack().equals(tempState)) {
+          nodesStack.pop()
+          edgesStack.pop()
+        }
+      } else {
+        await this.restartApp()
+      }
+
+      while (!edgesStack.isEmpty()) {
+        const pe = edgesStack.pop()
+        this.executeActions(pe.getFireActions())
+      }
+
+      tempState = await this.getCurrentState()
+      if (this.curState.equals(tempState)) {
+        return true
+      }
+      console.log('go to a wrong state!')
+      return await this.goBack()
+    }
+    return true
   }
 
   classifyNode(state) {
@@ -128,7 +183,7 @@ class DFSMonkey extends Monkey {
       this.currentActions.clear()
     }
     this.nodeCount++
-    this.nodes.add(toState)
+    this.nodes.push(toState)
   }
 
 
@@ -150,7 +205,9 @@ class DFSMonkey extends Monkey {
     const dumpfile = await this.device.dumpUI()
     const widgets = await utils.getWidgetsFromXml(dumpfile)
     const actions = this.getActions(widgets)
-    return new State(currentPackage, currentActivity, widgets, actions)
+    const state = new State(currentPackage, currentActivity, widgets, actions)
+    // console.log(state)
+    return state
   }
 }
 
@@ -161,5 +218,7 @@ const deviceId = 'DU2SSE1478031311'
 const act = '.LoadingActivity'
 
 const monkey = new DFSMonkey(pkg, act, deviceId)
-monkey.play()
+monkey.play().then(() => {
+  console.log('done')
+})
 

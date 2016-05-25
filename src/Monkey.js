@@ -1,5 +1,7 @@
 import Device from 'nata-device'
-import StartAppAction from './actions/StartAppAction'
+import StartAppAction from './actions/StartAppAction.js'
+import BackAction from './actions/BackAction.js'
+import _ from 'lodash'
 
 class Monkey {
   constructor(pkg, act, deviceId) {
@@ -8,6 +10,7 @@ class Monkey {
     this._deviceId = deviceId
     this._device = new Device(deviceId)
     this._restartAction = new StartAppAction(this._device, this.pkgAct)
+    this._backAction = new BackAction(this._device)
   }
 
   get pkgAct() {
@@ -24,6 +27,16 @@ class Monkey {
 
   get restartAction() {
     return this._restartAction
+  }
+
+  get backAction() {
+    return this._backAction
+  }
+
+  executeActions(actions) {
+    _.forEach(actions, async (action) => {
+      await action.fire()
+    })
   }
 }
 

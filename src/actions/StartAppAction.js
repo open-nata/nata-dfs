@@ -7,9 +7,9 @@ class StartAppAction extends Action {
     this.pkgAct = pkgAct
   }
 
-  fire() {
-    this.device.startActivity(this.pkgAct)
-    this.device.sleep(2000)
+  async fire() {
+    await this.device.startActivity(this.pkgAct)
+    await this.device.sleep(2000)
   }
 }
 
