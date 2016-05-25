@@ -5,13 +5,57 @@ class State {
     this._act = act
     this._widgets = widgets
     this._actions = actions
-    console.log(`${this._pkg} ${this._act} `)
 
-    this._it = actions[Symbol.iterator]()
+    this._kind = this.Types.NORMAL
+
+    this._fromEdge = null
+    this._toEdge = []
+
+    this.actionIndex = 0
+  }
+
+  static get Types() {
+    return {
+      NORMAL: 1,
+      OLD: 2,
+      OUT: 3,
+      SAME: 4,
+    }
+  }
+
+  get fromEdge() {
+    return this._fromEdge
+  }
+
+  set fromEdge(edge) {
+    this._fromEdge = edge
+  }
+
+  get toEdge() {
+    return this._toEdge
+  }
+
+  addToEdge(toEdge) {
+    this._toEdge.push(toEdge)
+  }
+
+  get kind() {
+    return this._kind
+  }
+
+  set kind(kind) {
+    this._kind = kind
   }
 
   get nextAction() {
-    return this._it.next()
+    if (this.actionIndex < this.actions.length) {
+      return this.actions[this.actionIndex++]
+    }
+    return null
+  }
+
+  isNotOver() {
+    return this.actionIndex < this.actions.length
   }
 
   get pkg() {
@@ -30,6 +74,44 @@ class State {
     return this._actions
   }
 
+  equals(oState) {
+    if (oState === null) {
+      return false
+    }
+    if (this === oState) {
+      return true
+    }
+    if (!(oState instanceof State)) {
+      return false
+    }
+    if (this.getAppPackage() === oState.getAppPackage()
+      && this.getActivity() === oState.getActivity()
+      && this.widgets.length === oState.widgets.length) {
+      let count = 0
+      // search for equal ones
+      for (let i = 0; i < this.widgets.length; i++) {
+        const searchTerm = this.widgets[i]
+        let index = -1
+        for (let j = 0, len = oState.widgets.length; j < len; j++) {
+          if (oState.widgets[j].equals(searchTerm)) {
+            index = j
+            break
+          }
+        }
+        if (index !== -1) {
+          count++
+        }
+      }
+
+      const rate = (count / this.widgets.length)
+      if (rate < 0.5) {
+        return true
+      }
+      console.debug(`rate : ${rate}`)
+    }
+
+    return false
+  }
 
 }
 

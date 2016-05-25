@@ -197,50 +197,51 @@ class Widget {
     return `Widget{X=${this.getX()}, Y=${this.getY()}, description=${description}}`
   }
 
-  // @Override
-  // public boolean equals(Object otherObject) {
-  //     if (this == otherObject) {
-  //         return true;
-  //     }
+  equals(otherWidget) {
+    if (this === otherWidget) {
+      return true
+    }
 
-  //     if (otherObject == null) {
-  //         return false;
-  //     }
+    if (otherWidget === null) {
+      return false
+    }
 
-  //     if (getClass() != otherObject.getClass()) {
-  //         return false;
-  //     }
+    if (!(otherWidget instanceof Widget)) {
+      return false
+    }
 
-  //     Widget other = (Widget) otherObject;
-  //     if(startX!=other.startX || startY != other.startY || endX !=other.endX || endY != other.endY){
-  //         return false;
-  //     }
+    if (this.startX !== otherWidget.startX
+      || this.startY !== otherWidget.startY
+      || this.endX !== otherWidget.endX
+      || this.endY !== otherWidget.endY) {
+      return false
+    }
 
-  //     if(!packageName.equals(other.packageName)){
-  //         return false;
-  //     }
-  //     if(!resourceId.equals(other.resourceId)){
-  //         return false;
-  //     }
+    if (this.packageName !== otherWidget.packageName) {
+      return false
+    }
+    if (this.resourceId !== otherWidget.resourceId) {
+      return false
+    }
 
-  //     if(!className.equals(other.className)){
-  //         return false;
-  //     }
+    if (this.className !== otherWidget.className) {
+      return false
+    }
 
-  //     if(!enabled.equals(other.enabled)){
-  //         return false;
-  //     }
+    if (this.enabled !== otherWidget.enabled) {
+      return false
+    }
 
-  //     if(!checked.equals(other.checked)){
-  //         return false;
-  //     }
+    if (this.checked !== otherWidget.checked) {
+      return false
+    }
 
-  //     if(!selected.equals(other.selected)){
-  //         return false;
-  //     }
+    if (this.selected !== otherWidget.selected) {
+      return false
+    }
 
-  //     return true;
-  // }
+    return true
+  }
 }
 
 export default Widget
