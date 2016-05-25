@@ -1,36 +1,245 @@
 
 class Widget {
   constructor() {
-    this.text = ''
-    this.resourceId = ''
-    this.className = ''
-    this.contentDesc = ''
-    this.checkable = ''
-    this.checked = ''
-    this.clickable = ''
-    this.bounds = ''
-    this.packageName = ''
-    this.enabled = ''
-    this.focusable = ''
-    this.focused = ''
-    this.scrollable = ''
-    this.long_clickable = ''
-    this.password = ''
-    this.selected = ''
+    this._text = ''
+    this._resourceId = ''
+    this._className = ''
+    this._contentDesc = ''
+    this._checkable = ''
+    this._checked = ''
+    this._clickable = ''
+    this._bounds = ''
+    this._packageName = ''
+    this._enabled = ''
+    this._focusable = ''
+    this._focused = ''
+    this._scrollable = ''
+    this._long_clickable = ''
+    this._password = ''
+    this._selected = ''
 
-    this.startX = 0
-    this.startY = 0
-    this.endX = 0
-    this.endY = 0
+    this._startX = 0
+    this._startY = 0
+    this._endX = 0
+    this._endY = 0
   }
 
   set text(text) {
-    this.text = text
+    this._text = text
   }
 
   get text() {
-    return this.text
+    return this._text
   }
+
+  get startx() {
+    return this._startX
+  }
+
+  get starty() {
+    return this._startY
+  }
+
+  get endx() {
+    return this._endX
+  }
+
+  get endy() {
+    return this._endY
+  }
+
+  get x() {
+    return this._startX + 1
+  }
+
+  get y() {
+    return this._startY + 1
+  }
+
+  get centerx() {
+    return (this._endX - this._startX) / 2 + this._startX
+  }
+
+  get centery() {
+    return (this._endY - this._startY) / 2 + this._startY
+  }
+
+  get focused() {
+    return this._focused
+  }
+
+  set focused(focused) {
+    this._focused = focused
+  }
+
+  get scrollable() {
+    return this._scrollable
+  }
+
+  set scrollable(scrollable) {
+    this._scrollable = scrollable
+  }
+
+  get longClickable() {
+    return this._long_clickable
+  }
+
+  set longClickable(longClickable) {
+    this._long_clickable = longClickable
+  }
+
+  get password() {
+    return this._password
+  }
+
+  set password(password) {
+    this._password = password
+  }
+
+  get selected() {
+    return this._selected
+  }
+
+  set selected(selected) {
+    this._selected = selected
+  }
+
+  set focusable(focusable) {
+    this._focusable = focusable
+  }
+
+  get focusable() {
+    return this._focusable
+  }
+
+  set enabled(enabled) {
+    this._enabled = enabled
+  }
+
+  get enabled() {
+    return this._enabled
+  }
+
+  set packageName(packageName) {
+    this._packageName = packageName
+  }
+
+  get packageName() {
+    return this._packageName
+  }
+
+  get className() {
+    return this._className
+  }
+
+  set className(className) {
+    this._className = className
+  }
+
+  get bounds() {
+    return this._bounds
+  }
+
+  set bounds(bounds) {
+    this._bounds = bounds
+    const matches = bounds.match(/([0-9]+)/g)
+
+    this._startX = parseInt(matches[0], 10)
+    this._startY = parseInt(matches[1], 10)
+    this._endX = parseInt(matches[2], 10)
+    this._endY = parseInt(matches[3], 10)
+  }
+
+  get resourceid() {
+    return this._resourceId
+  }
+
+  set resourceId(resourceId) {
+    this._resourceId = resourceId
+  }
+
+  get contentDesc() {
+    return this._contentDesc
+  }
+
+  set contentDesc(contentDesc) {
+    this._contentDesc = contentDesc
+  }
+
+  get checkable() {
+    return this._checkable
+  }
+
+  set checkable(checkable) {
+    this._checkable = checkable
+  }
+
+  get checked() {
+    return this._checked
+  }
+
+  set checked(checked) {
+    this._checked = checked
+  }
+
+  get clickable() {
+    return this._clickable
+  }
+
+  set clickable(clickable) {
+    this._clickable = clickable
+  }
+
+  toString() {
+    const description = `${this.className} ${this.resourceId} ${this.text}`
+    return `Widget{X=${this.getX()}, Y=${this.getY()}, description=${description}}`
+  }
+
+  // @Override
+  // public boolean equals(Object otherObject) {
+  //     if (this == otherObject) {
+  //         return true;
+  //     }
+
+  //     if (otherObject == null) {
+  //         return false;
+  //     }
+
+  //     if (getClass() != otherObject.getClass()) {
+  //         return false;
+  //     }
+
+  //     Widget other = (Widget) otherObject;
+  //     if(startX!=other.startX || startY != other.startY || endX !=other.endX || endY != other.endY){
+  //         return false;
+  //     }
+
+  //     if(!packageName.equals(other.packageName)){
+  //         return false;
+  //     }
+  //     if(!resourceId.equals(other.resourceId)){
+  //         return false;
+  //     }
+
+  //     if(!className.equals(other.className)){
+  //         return false;
+  //     }
+
+  //     if(!enabled.equals(other.enabled)){
+  //         return false;
+  //     }
+
+  //     if(!checked.equals(other.checked)){
+  //         return false;
+  //     }
+
+  //     if(!selected.equals(other.selected)){
+  //         return false;
+  //     }
+
+  //     return true;
+  // }
 }
 
 export default Widget
+

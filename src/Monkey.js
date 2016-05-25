@@ -23,12 +23,3 @@ class Monkey {
 }
 
 export default Monkey
-
-const pkg = 'com.cvicse.zhnt'
-const deviceId = 'DU2SSE1478031311'
-const act = '.LoadingActivity'
-
-const monkey = new Monkey(pkg, act, deviceId)
-monkey.getCurrentState().then(() => {
-  console.log('done')
-})
