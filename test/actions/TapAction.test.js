@@ -1,3 +1,15 @@
-import TapAction from '../../src/actions/TapAction'
+import TapAction from '../../lib/actions/TapAction.js'
+import Device from 'nata-device'
 
-TapAction.hello()
+describe('testing TapAction', () => {
+  const deviceId = 'DU2SSE1478031311'
+  let device
+
+  before(() => {
+    device = new Device(deviceId)
+  })
+
+  it('should tap ', async done => {
+    done()
+  })
+})

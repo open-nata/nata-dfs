@@ -1,4 +1,6 @@
-
+/**
+ * Widget class
+ */
 class Widget {
   constructor() {
     this._text = ''
@@ -32,19 +34,19 @@ class Widget {
     return this._text
   }
 
-  get startx() {
+  get startX() {
     return this._startX
   }
 
-  get starty() {
+  get startY() {
     return this._startY
   }
 
-  get endx() {
+  get endX() {
     return this._endX
   }
 
-  get endy() {
+  get endY() {
     return this._endY
   }
 
@@ -56,11 +58,11 @@ class Widget {
     return this._startY + 1
   }
 
-  get centerx() {
+  get centerX() {
     return (this._endX - this._startX) / 2 + this._startX
   }
 
-  get centery() {
+  get centerY() {
     return (this._endY - this._startY) / 2 + this._startY
   }
 

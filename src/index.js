@@ -1,9 +1,3 @@
-import Monkey from './Monkey'
-
-class DFSMonkey extends Monkey {
-  play() {
-    
-  }
-}
+import DFSMonkey from './DFSMonkey.js'
 
 export default DFSMonkey

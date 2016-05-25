@@ -4,7 +4,12 @@ import Widget from '../Widget.js'
 
 const parser = new xmldom.DOMParser()
 
-function parseFile(target) {
+/**
+ * parse the xml file using xmldom
+ * @param  {String} target the local path of dumpfile.xml
+ * @return {Document}  the document instance of the dumpfile.xml
+ */
+export function parseFile(target) {
   return new Promise((resolve, reject) => {
     fs.readFile(target, (err, data) => {
       if (err) reject(err)
@@ -14,9 +19,13 @@ function parseFile(target) {
   })
 }
 
-async function getWidgets(target) {
+/**
+ * get widgets from dumpfile.xml
+ * @param  {String} target the local path of dumpfile.xml
+ * @return {[Widget]}  Array of avaliable widgets
+ */
+export async function getWidgetsFromXml(target) {
   const doc = await parseFile(target)
-  // console.log(doc)
   const widgets = []
   const nodes = doc.getElementsByTagName('node')
   let widget
@@ -43,7 +52,4 @@ async function getWidgets(target) {
     widgets.push(widget)
   }
   return widgets
-  // console.log(widgets)
 }
-
-export default getWidgets

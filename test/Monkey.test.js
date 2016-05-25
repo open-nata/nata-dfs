@@ -1,4 +1,4 @@
-import Monkey from '../lib/Monkey'
+import Monkey from '../lib/Monkey.js'
 import assert from 'assert'
 
 describe('testing monkey', () => {
@@ -12,8 +12,8 @@ describe('testing monkey', () => {
   })
 
 
-  it('should get current state', async done => {
-    await monkey.getCurrentState()
+  it('should get pkg_act', done => {
+    assert.equal(monkey.pkgAct, `${pkg}/${act}`)
     done()
   })
 })

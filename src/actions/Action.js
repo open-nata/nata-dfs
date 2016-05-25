@@ -1,6 +1,6 @@
 class Action {
   constructor(type) {
-    this.type = type
+    this._type = type
   }
 }
 
