@@ -152,7 +152,7 @@ class Widget {
     this._endY = parseInt(matches[3], 10)
   }
 
-  get resourceid() {
+  get resourceId() {
     return this._resourceId
   }
 
@@ -194,7 +194,7 @@ class Widget {
 
   toString() {
     const description = `${this.className} ${this.resourceId} ${this.text}`
-    return `Widget{X=${this.getX()}, Y=${this.getY()}, description=${description}}`
+    return `Widget{X=${this.x}, Y=${this.y}, description=${description}}`
   }
 
   equals(otherWidget) {

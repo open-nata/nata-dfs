@@ -48,8 +48,7 @@ class State {
 
   getNextAction() {
     if (this.actionIndex < this.actions.length) {
-      const action = this._actions[this.actionIndex++]
-      return action
+      return this._actions[this.actionIndex++]
     }
     return null
   }

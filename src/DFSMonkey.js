@@ -21,7 +21,7 @@ class DFSMonkey extends Monkey {
 
   async play() {
     // start app
-    console.log('start palying...')
+    console.log('start playing...')
     await this.startApp()
     // record current state
     this.rootState = await this.getCurrentState()
@@ -225,9 +225,7 @@ class DFSMonkey extends Monkey {
     const dumpfile = await this.device.dumpUI()
     const widgets = await utils.getWidgetsFromXml(dumpfile)
     const actions = this.getActions(widgets)
-    const state = new State(currentPackage, currentActivity, widgets, actions)
-    // console.log(state)
-    return state
+    return new State(currentPackage, currentActivity, widgets, actions)
   }
 }
 

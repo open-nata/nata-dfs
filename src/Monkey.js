@@ -34,9 +34,6 @@ class Monkey {
   }
 
   async executeActions(actions) {
-    // _.forEach(actions, async (action) => {
-    //   await action.fire()
-    // })
     for (let i = 0; i < actions.length; i++) {
       await actions[i].fire()
     }
