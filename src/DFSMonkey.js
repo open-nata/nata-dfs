@@ -29,13 +29,8 @@ class DFSMonkey extends Monkey {
     this.curState = this.rootState
     this.addNode(this.rootState)
 
-    console.log('has add root node')
-    console.log(this.curState.fromEdge)
-    console.log(this.curState.isNotOver())
-
     // start loop
     while (this.flag && !(this.curState.fromEdge == null && !this.curState.isNotOver())) {
-      console.log('into loop')
       const action = this.curState.getNextAction()
 
       if (action === null) {
@@ -46,10 +41,8 @@ class DFSMonkey extends Monkey {
       await action.fire()
 
       const tempNode = await this.getCurrentState()
-      console.log('tempNode')
 
       const kind = this.classifyNode(tempNode)
-      console.log(`kind : ${kind}`)
 
       switch (kind) {
         case State.Types.OLD:
@@ -63,10 +56,8 @@ class DFSMonkey extends Monkey {
           console.log('same state')
           break
         default:
-          console.log('default')
           this.currentActions.push(action)
           this.addNode(tempNode)
-          console.log('addNode')
           this.curState = tempNode
           console.log('new state')
           break
@@ -80,14 +71,14 @@ class DFSMonkey extends Monkey {
 
   async restartApp() {
     await this.restartAction.fire()
-    const rootPa = this.rootState.getAppPackage()
-    const rootAct = this.rootState.getActivity()
+    const rootPa = this.rootState.pkg
+    const rootAct = this.rootState.act
     let count = 0
     const RESTART_TIME_LIMIT = 10
     while (count <= RESTART_TIME_LIMIT) {
       await this.wait(1000)
-      if (rootPa === this.device.getCurrentPackageName()
-        && rootAct === this.device.getCurrentActivity()) {
+      if (rootPa === await this.device.getCurrentPackageName()
+        && rootAct === await this.device.getCurrentActivity()) {
         break
       }
 
@@ -101,25 +92,27 @@ class DFSMonkey extends Monkey {
 
   // TODO
   async goBack() {
-    const ee = this.curState.getFromEdge()
-    if (ee != null) {
-      this.curState = ee.getFromState()
+    console.log('go back')
+    const ee = this.curState.fromEdge
+    if (ee !== null) {
+      this.curState = ee.fromState
+      console.log('ee !== null')
 
       while (!this.curState.isNotOver()
-              && this.curState.getFromEdge() !== null) {
-        this.curState = this.curState.getFromEdge().getFromState()
+              && this.curState.fromEdge !== null) {
+        this.curState = this.curState.fromEdge.fromState
       }
 
       const nodesStack = []
       const edgesStack = []
 
       let tempState = this.curState
-      while (tempState.getFromEdge() != null) {
-        edgesStack.push(tempState.getFromEdge())
-        tempState = tempState.getFromEdge().getFromState()
+      while (tempState.fromEdge != null) {
+        edgesStack.push(tempState.fromEdge)
+        tempState = tempState.fromEdge.fromState
         nodesStack.push(tempState)
       }
-
+      console.log(' attempt to one step back')
       // attempt to one step back
       if (edgesStack.length > 2) {
         await this.backAction.fire()
@@ -131,20 +124,28 @@ class DFSMonkey extends Monkey {
         return true
       }
 
-      if (tempState != null && nodesStack.contains(tempState)) {
-        // this node is ancestor of current node
+      console.log('see if ')
+      let index = -1
+      const len = nodesStack.length
+      for (let j = 0; j < len; j++) {
+        if (nodesStack[j].equals(tempState)) {
+          index = j
+          break
+        }
+      }
+
+      if (tempState != null && index !== -1) {
         while (nodesStack.length !== 0
-          && !nodesStack.peekBack().equals(tempState)) {
+          && !_.last(nodesStack).equals(tempState)) {
           nodesStack.pop()
           edgesStack.pop()
         }
       } else {
         await this.restartApp()
       }
-
-      while (!edgesStack.isEmpty()) {
+      while (edgesStack.length !== 0) {
         const pe = edgesStack.pop()
-        this.executeActions(pe.getFireActions())
+        await this.executeActions(pe.fireActions)
       }
 
       tempState = await this.getCurrentState()
@@ -169,6 +170,7 @@ class DFSMonkey extends Monkey {
       if (this.curState != null && this.curState.equals(state)) {
         return State.Types.SAME
       }
+
       console.log('find if it is old state')
       // find if old state
       let index = -1

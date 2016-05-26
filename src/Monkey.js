@@ -33,10 +33,13 @@ class Monkey {
     return this._backAction
   }
 
-  executeActions(actions) {
-    _.forEach(actions, async (action) => {
-      await action.fire()
-    })
+  async executeActions(actions) {
+    // _.forEach(actions, async (action) => {
+    //   await action.fire()
+    // })
+    for (let i = 0; i < actions.length; i++) {
+      await actions[i].fire()
+    }
   }
 }
 

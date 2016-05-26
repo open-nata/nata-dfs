@@ -23,7 +23,7 @@ class State {
   }
 
   get fromEdge() {
-    return this._fromEdge
+    return this._fromEdge || null
   }
 
   setFromEdge(edge) {
@@ -42,7 +42,7 @@ class State {
     return this._kind
   }
 
-  set kind(kind) {
+  setKind(kind) {
     this._kind = kind
   }
 
@@ -98,7 +98,7 @@ class State {
             break
           }
         }
-        if (index !== -1) {
+        if (index === -1) {
           count++
         }
       }
