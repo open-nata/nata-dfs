@@ -26,7 +26,7 @@ class State {
     return this._fromEdge
   }
 
-  set fromEdge(edge) {
+  setFromEdge(edge) {
     this._fromEdge = edge
   }
 
@@ -46,9 +46,10 @@ class State {
     this._kind = kind
   }
 
-  get nextAction() {
+  getNextAction() {
     if (this.actionIndex < this.actions.length) {
-      return this.actions[this.actionIndex++]
+      const action = this._actions[this.actionIndex++]
+      return action
     }
     return null
   }
@@ -83,8 +84,8 @@ class State {
     if (!(oState instanceof State)) {
       return false
     }
-    if (this.getAppPackage() === oState.getAppPackage()
-      && this.getActivity() === oState.getActivity()
+    if (this.pkg === oState.pkg
+      && this.act === oState.act
       && this.widgets.length === oState.widgets.length) {
       let count = 0
       // search for equal ones
@@ -106,7 +107,7 @@ class State {
       if (rate < 0.5) {
         return true
       }
-      console.debug(`rate : ${rate}`)
+      console.log(`rate : ${rate}`)
     }
 
     return false

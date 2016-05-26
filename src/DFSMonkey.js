@@ -28,20 +28,28 @@ class DFSMonkey extends Monkey {
     // console.log(this.rootState)
     this.curState = this.rootState
     this.addNode(this.rootState)
+
+    console.log('has add root node')
+    console.log(this.curState.fromEdge)
+    console.log(this.curState.isNotOver())
+
     // start loop
     while (this.flag && !(this.curState.fromEdge == null && !this.curState.isNotOver())) {
-      const action = this.curState.getAction()
+      console.log('into loop')
+      const action = this.curState.getNextAction()
 
       if (action === null) {
         this.flag = await this.goBack()
         continue
       }
 
-      this.action.fire()
+      await action.fire()
 
       const tempNode = await this.getCurrentState()
+      console.log('tempNode')
 
       const kind = this.classifyNode(tempNode)
+      console.log(`kind : ${kind}`)
 
       switch (kind) {
         case State.Types.OLD:
@@ -52,13 +60,15 @@ class DFSMonkey extends Monkey {
           this.flag = await this.goBack()
           break
         case State.Types.SAME:
-          console.debug('same state')
+          console.log('same state')
           break
         default:
+          console.log('default')
           this.currentActions.push(action)
           this.addNode(tempNode)
+          console.log('addNode')
           this.curState = tempNode
-          console.debug('new state')
+          console.log('new state')
           break
       }
     }
@@ -149,6 +159,7 @@ class DFSMonkey extends Monkey {
 
   classifyNode(state) {
     let k = State.Types.NORMAL
+    console.log(`k : ${k}`)
     // out of this App
     if (state.pkg !== this.pkg) {
       state.setKind(State.Types.OUT)
@@ -158,14 +169,18 @@ class DFSMonkey extends Monkey {
       if (this.curState != null && this.curState.equals(state)) {
         return State.Types.SAME
       }
+      console.log('find if it is old state')
       // find if old state
       let index = -1
-      for (let j = 0, len = this.nodes.length; j < len; j++) {
+      const len = this.nodes.length
+      console.log(len)
+      for (let j = 0; j < len; j++) {
         if (this.nodes[j].equals(state)) {
           index = j
           break
         }
       }
+      console.log('if it is old state')
       // if it is
       if (index !== -1) {
         state.setKind(State.Types.OLD)
@@ -177,11 +192,14 @@ class DFSMonkey extends Monkey {
 
   addNode(toState) {
     if (this.nodeCount !== 0) {
+      console.log('!==0 ')
       const edge = new Edge(this.curState, toState, this.currentActions)
+      console.log('new Edge')
       this.curState.addToEdge(edge)
       toState.setFromEdge(edge)
-      this.currentActions.clear()
+      this.currentActions = []
     }
+    console.log('into addNode')
     this.nodeCount++
     this.nodes.push(toState)
   }

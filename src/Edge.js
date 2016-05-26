@@ -6,9 +6,6 @@ class Edge {
     this._fromState = fromState
     this._toState = toState
     this._actions = _.clone(actions)
-
-    fromState.addToEdge(this)
-    toState.setFromEdge(this)
   }
 
   get fromState() {
