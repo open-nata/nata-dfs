@@ -1,21 +1,6 @@
 import fs from 'fs'
-import xmldom from 'xmldom'
 import Widget from '../Widget.js'
-
-const parser = new xmldom.DOMParser({
-  locator: {},
-  errorHandler: {
-    warning(w) {
-      console.warn(w)
-    },
-    error(e) {
-      console.error(e)
-    },
-    fatalError(f) {
-      console.error(f)
-    }
-  },
-})
+import cheerio from 'cheerio'
 
 /**
  * parse the xml file using xmldom
@@ -26,7 +11,8 @@ export function parseFile(target) {
   return new Promise((resolve, reject) => {
     fs.readFile(target, 'utf8', (err, data) => {
       if (err) reject(err)
-      const doc = parser.parseFromString(data, 'application/xml')
+      // const doc = parser.parseFromString(data, 'application/xml')
+      const doc = cheerio.load(data, { xmlMode: true })
       resolve(doc)
     })
   })
@@ -38,31 +24,38 @@ export function parseFile(target) {
  * @return {[Widget]}  Array of avaliable widgets
  */
 export async function getWidgetsFromXml(target) {
-  const doc = await parseFile(target)
+  const $ = await parseFile(target)
   const widgets = []
-  const nodes = doc.getElementsByTagName('node')
   let widget
 
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i]
+  $('node').each((i, elem) => {
+    const node = $(elem)
     widget = new Widget()
-    widget.text = node.getAttribute('text')
-    widget.resourceId = node.getAttribute('resource-id')
-    widget.className = node.getAttribute('class')
-    widget.packageName = node.getAttribute('package')
-    widget.contentDesc = node.getAttribute('content-desc')
-    widget.checkable = node.getAttribute('checkable')
-    widget.checked = node.getAttribute('checked')
-    widget.clickable = node.getAttribute('clickable')
-    widget.enabled = node.getAttribute('enabled')
-    widget.focusable = node.getAttribute('focusable')
-    widget.focused = node.getAttribute('focused')
-    widget.scrollable = node.getAttribute('scrollable')
-    widget.longClickable = node.getAttribute('long-clickable')
-    widget.password = node.getAttribute('password')
-    widget.selected = node.getAttribute('selected')
-    widget.bounds = node.getAttribute('bounds')
+    widget.text = node.attr('text')
+    widget.resourceId = node.attr('resource-id')
+    widget.className = node.attr('class')
+    widget.packageName = node.attr('package')
+    widget.contentDesc = node.attr('content-desc')
+    widget.checkable = node.attr('checkable')
+    widget.checked = node.attr('checked')
+    widget.clickable = node.attr('clickable')
+    widget.enabled = node.attr('enabled')
+    widget.focusable = node.attr('focusable')
+    widget.focused = node.attr('focused')
+    widget.scrollable = node.attr('scrollable')
+    widget.longClickable = node.attr('long-clickable')
+    widget.password = node.attr('password')
+    widget.selected = node.attr('selected')
+    widget.bounds = node.attr('bounds')
     widgets.push(widget)
-  }
+  })
+
   return widgets
 }
+
+// import path from 'path'
+// const dumpfilePath = path.join(__dirname, '../../assets/dumpfile.xml')
+// getWidgetsFromXml(dumpfilePath).then((widgets) => {
+//   console.log(widgets)
+// })
+// .catch((err) => console.log(err))

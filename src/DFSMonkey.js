@@ -20,6 +20,7 @@ class DFSMonkey extends Monkey {
   }
 
   async play() {
+    console.log(`Monkey on ${this._deviceId} start playing...`)
     // analyse the apk to run
     console.log('analysing apk...')
     await this.analyseApk()
@@ -29,7 +30,6 @@ class DFSMonkey extends Monkey {
 
     console.log(this.pkgAct)
     // start app
-    console.log('start playing...')
     await this.startApp()
     // record current state
     this.rootState = await this.getCurrentState()

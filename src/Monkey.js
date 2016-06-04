@@ -11,18 +11,18 @@ class Monkey {
     this._pkg = undefined
     this._act = undefined
     this._apk = undefined
+    this._restartAction = undefined
     this._deviceId = deviceId
     this._device = new Device(deviceId)
     this._backAction = new BackAction(this._device)
     this._resultDir = path.join(__dirname, `../results/${this._deviceId}`)
-    console.log('err')
   }
 
   async analyseApk() {
     if (!fs.existsSync(this._resultDir)) {
       fs.mkdirSync(this._resultDir, '0777')
     }
-    this._apk = await apkparser.parse(this._apkPath)
+    this._apk = await apkparser.parse(this._apkPath, `${this._resultDir}/apktool`)
     this._pkg = this._apk.packageName
     this._act = this._apk.entry
     this._restartAction = new StartAppAction(this._device, this.pkgAct)
