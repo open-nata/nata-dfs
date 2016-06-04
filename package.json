@@ -24,6 +24,8 @@
   },
   "homepage": "https://github.com/open-nata/nata-dfs#readme",
   "dependencies": {
+    "apkparser": "0.0.3",
+    "eventproxy": "^0.3.4",
     "lodash": "^4.13.1",
     "nata-device": "^0.1.0",
     "xmldom": "^0.1.22"

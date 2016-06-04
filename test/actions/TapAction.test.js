@@ -1,4 +1,3 @@
-import TapAction from '../../lib/actions/TapAction.js'
 import Device from 'nata-device'
 
 describe('testing TapAction', () => {

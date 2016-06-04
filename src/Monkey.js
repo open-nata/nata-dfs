@@ -1,16 +1,43 @@
 import Device from 'nata-device'
 import StartAppAction from './actions/StartAppAction.js'
 import BackAction from './actions/BackAction.js'
-import _ from 'lodash'
+import apkparser from 'apkparser'
+import path from 'path'
+import fs from 'fs'
 
 class Monkey {
-  constructor(pkg, act, deviceId) {
-    this._pkg = pkg
-    this._act = act
+  constructor(deviceId, apkpath) {
+    this._apkPath = apkpath
+    this._pkg = undefined
+    this._act = undefined
+    this._apk = undefined
     this._deviceId = deviceId
     this._device = new Device(deviceId)
-    this._restartAction = new StartAppAction(this._device, this.pkgAct)
     this._backAction = new BackAction(this._device)
+    this._resultDir = path.join(__dirname, `../results/${this._deviceId}`)
+    console.log('err')
+  }
+
+  async analyseApk() {
+    if (!fs.existsSync(this._resultDir)) {
+      fs.mkdirSync(this._resultDir, '0777')
+    }
+    this._apk = await apkparser.parse(this._apkPath)
+    this._pkg = this._apk.packageName
+    this._act = this._apk.entry
+    this._restartAction = new StartAppAction(this._device, this.pkgAct)
+  }
+
+  async installApk() {
+    await this._device.install(this._apkPath)
+  }
+
+  get apkPath() {
+    return this._apkPath
+  }
+
+  get resultDir() {
+    return this._resultDir
   }
 
   get pkgAct() {

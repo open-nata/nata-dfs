@@ -2,18 +2,31 @@ import fs from 'fs'
 import xmldom from 'xmldom'
 import Widget from '../Widget.js'
 
-const parser = new xmldom.DOMParser()
+const parser = new xmldom.DOMParser({
+  locator: {},
+  errorHandler: {
+    warning(w) {
+      console.warn(w)
+    },
+    error(e) {
+      console.error(e)
+    },
+    fatalError(f) {
+      console.error(f)
+    }
+  },
+})
 
 /**
  * parse the xml file using xmldom
  * @param  {String} target the local path of dumpfile.xml
- * @return {Document}  the document instance of the dumpfile.xml
+ * @return {Promise}  the document instance of the dumpfile.xml
  */
 export function parseFile(target) {
   return new Promise((resolve, reject) => {
-    fs.readFile(target, (err, data) => {
+    fs.readFile(target, 'utf8', (err, data) => {
       if (err) reject(err)
-      const doc = parser.parseFromString(data.toString(), 'application/xml')
+      const doc = parser.parseFromString(data, 'application/xml')
       resolve(doc)
     })
   })

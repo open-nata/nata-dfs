@@ -7,8 +7,8 @@ import State from './State.js'
 
 
 class DFSMonkey extends Monkey {
-  constructor(pkg, act, deviceId) {
-    super(pkg, act, deviceId)
+  constructor(deviceId, apkpath) {
+    super(deviceId, apkpath)
     this.currentActions = []
     this.nodes = []
 
@@ -20,12 +20,19 @@ class DFSMonkey extends Monkey {
   }
 
   async play() {
+    // analyse the apk to run
+    console.log('analysing apk...')
+    await this.analyseApk()
+    // install apk in the device
+    console.log('installing apk...')
+    await this.installApk()
+
+    console.log(this.pkgAct)
     // start app
     console.log('start playing...')
     await this.startApp()
     // record current state
     this.rootState = await this.getCurrentState()
-    // console.log(this.rootState)
     this.curState = this.rootState
     this.addNode(this.rootState)
 
@@ -90,13 +97,10 @@ class DFSMonkey extends Monkey {
     await this.device.sleep(ms)
   }
 
-  // TODO
   async goBack() {
-    console.log('go back')
     const ee = this.curState.fromEdge
     if (ee !== null) {
       this.curState = ee.fromState
-      console.log('ee !== null')
 
       while (!this.curState.isNotOver()
               && this.curState.fromEdge !== null) {
@@ -112,7 +116,6 @@ class DFSMonkey extends Monkey {
         tempState = tempState.fromEdge.fromState
         nodesStack.push(tempState)
       }
-      console.log(' attempt to one step back')
       // attempt to one step back
       if (edgesStack.length > 2) {
         await this.backAction.fire()
@@ -124,7 +127,6 @@ class DFSMonkey extends Monkey {
         return true
       }
 
-      console.log('see if ')
       let index = -1
       const len = nodesStack.length
       for (let j = 0; j < len; j++) {
@@ -152,7 +154,6 @@ class DFSMonkey extends Monkey {
       if (this.curState.equals(tempState)) {
         return true
       }
-      console.log('go to a wrong state!')
       return await this.goBack()
     }
     return true
@@ -160,7 +161,6 @@ class DFSMonkey extends Monkey {
 
   classifyNode(state) {
     let k = State.Types.NORMAL
-    console.log(`k : ${k}`)
     // out of this App
     if (state.pkg !== this.pkg) {
       state.setKind(State.Types.OUT)
@@ -171,7 +171,6 @@ class DFSMonkey extends Monkey {
         return State.Types.SAME
       }
 
-      console.log('find if it is old state')
       // find if old state
       let index = -1
       const len = this.nodes.length
@@ -182,7 +181,6 @@ class DFSMonkey extends Monkey {
           break
         }
       }
-      console.log('if it is old state')
       // if it is
       if (index !== -1) {
         state.setKind(State.Types.OLD)
@@ -194,14 +192,11 @@ class DFSMonkey extends Monkey {
 
   addNode(toState) {
     if (this.nodeCount !== 0) {
-      console.log('!==0 ')
       const edge = new Edge(this.curState, toState, this.currentActions)
-      console.log('new Edge')
       this.curState.addToEdge(edge)
       toState.setFromEdge(edge)
       this.currentActions = []
     }
-    console.log('into addNode')
     this.nodeCount++
     this.nodes.push(toState)
   }
@@ -222,7 +217,8 @@ class DFSMonkey extends Monkey {
   async getCurrentState() {
     const currentActivity = await this.device.getCurrentActivity()
     const currentPackage = await this.device.getCurrentPackageName()
-    const dumpfile = await this.device.dumpUI()
+    const target = `${this.resultDir}/dumpfile.xml`
+    const dumpfile = await this.device.dumpUI(target)
     const widgets = await utils.getWidgetsFromXml(dumpfile)
     const actions = this.getActions(widgets)
     return new State(currentPackage, currentActivity, widgets, actions)
@@ -231,12 +227,5 @@ class DFSMonkey extends Monkey {
 
 export default DFSMonkey
 
-const pkg = 'com.cvicse.zhnt'
-const deviceId = 'DU2SSE1478031311'
-const act = '.LoadingActivity'
 
-const monkey = new DFSMonkey(pkg, act, deviceId)
-monkey.play().then(() => {
-  console.log('done')
-})
 
