@@ -26,10 +26,9 @@
   "dependencies": {
     "apkparser": "^0.1.0",
     "cheerio": "^0.20.0",
-    "eventproxy": "^0.3.4",
     "lodash": "^4.13.1",
     "nata-device": "^0.1.0",
-    "xmldom": "^0.1.22"
+    "rimraf": "^2.5.2"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",

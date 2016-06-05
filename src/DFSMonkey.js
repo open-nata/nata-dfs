@@ -19,6 +19,14 @@ class DFSMonkey extends Monkey {
     this.flag = true
   }
 
+
+  collectCoverage() {
+    let cnt = 0
+    return setInterval(() => {
+      this.device.collectCoverage(`${this._coveragePath}/${cnt++}.ec`)
+    }, 10000)
+  }
+
   async play() {
     console.log(`Monkey on ${this._deviceId} start playing...`)
     // analyse the apk to run
@@ -27,6 +35,8 @@ class DFSMonkey extends Monkey {
     // install apk in the device
     console.log('installing apk...')
     await this.installApk()
+
+    const ccInterval = this.collectCoverage()
 
     console.log(this.pkgAct)
     // start app
@@ -70,6 +80,8 @@ class DFSMonkey extends Monkey {
           break
       }
     }
+
+    clearInterval(ccInterval)
   }
 
   async startApp() {
@@ -174,7 +186,6 @@ class DFSMonkey extends Monkey {
       // find if old state
       let index = -1
       const len = this.nodes.length
-      console.log(len)
       for (let j = 0; j < len; j++) {
         if (this.nodes[j].equals(state)) {
           index = j

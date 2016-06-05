@@ -4,6 +4,7 @@ import _ from 'lodash'
 import DFSMonkey from './DFSMonkey.js'
 
 const apkPath = path.join(__dirname, '../assets/alogcat.apk')
+console.log('running')
 
 Device.getOnlineDeviceIds() // get online devices
   .then(ids => {
@@ -14,3 +15,4 @@ Device.getOnlineDeviceIds() // get online devices
       .catch((err) => console.log(err))
     })
   })
+  .catch((err) => console.log(err))
