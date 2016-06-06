@@ -26,6 +26,7 @@
   "dependencies": {
     "apkparser": "^0.1.0",
     "cheerio": "^0.20.0",
+    "glob": "^7.0.3",
     "lodash": "^4.13.1",
     "nata-device": "^0.1.0",
     "rimraf": "^2.5.2"

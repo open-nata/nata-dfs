@@ -106,7 +106,7 @@ class State {
       if (rate < 0.5) {
         return true
       }
-      console.log(`rate : ${rate}`)
+      // console.log(`rate : ${rate}`)
     }
 
     return false

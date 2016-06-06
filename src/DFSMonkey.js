@@ -7,8 +7,8 @@ import State from './State.js'
 
 
 class DFSMonkey extends Monkey {
-  constructor(deviceId, apkpath) {
-    super(deviceId, apkpath)
+  constructor(deviceId, appPath, pkg, act) {
+    super(deviceId, appPath, pkg, act)
     this.currentActions = []
     this.nodes = []
 
@@ -19,13 +19,6 @@ class DFSMonkey extends Monkey {
     this.flag = true
   }
 
-
-  collectCoverage() {
-    let cnt = 0
-    return setInterval(() => {
-      this.device.collectCoverage(`${this._coveragePath}/${cnt++}.ec`)
-    }, 10000)
-  }
 
   async play() {
     console.log(`Monkey on ${this._deviceId} start playing...`)
@@ -70,13 +63,13 @@ class DFSMonkey extends Monkey {
           this.flag = await this.goBack()
           break
         case State.Types.SAME:
-          console.log('same state')
+          // console.log('same state')
           break
         default:
           this.currentActions.push(action)
           this.addNode(tempNode)
           this.curState = tempNode
-          console.log('new state')
+          // console.log('new state')
           break
       }
     }
