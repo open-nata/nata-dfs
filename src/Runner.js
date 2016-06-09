@@ -22,6 +22,3 @@ apkparser.parse(apkPath).then((manifest) => {
   })
   .catch((err) => console.log(err))
 })
-
-
-
