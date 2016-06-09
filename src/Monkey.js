@@ -59,12 +59,10 @@ class Monkey {
     }, 10000)
   }
 
-  // getEmmaCoverage() {
-    
-  // }
-
   async installApk() {
-    await this._device.install(this._apkPath)
+    if (this._apkPath) {
+      await this._device.install(this._apkPath)
+    }
   }
 
   get apkPath() {

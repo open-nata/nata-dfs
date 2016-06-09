@@ -13,7 +13,7 @@ apkparser.parse(apkPath).then((manifest) => {
   .then(ids => {
     _.forEach(ids, id => {
       console.time(`monkey-${id}`)
-      new DFSMonkey(id, apkPath, pkg, act).play().then(() => {
+      new DFSMonkey(id, null, pkg, act).play().then(() => {
         console.log('done')
         console.timeEnd(`monkey-${id}`)
       })
