@@ -1,7 +1,6 @@
 import Monkey from './Monkey'
-import * as utils from './utils/index.js'
+
 import _ from 'lodash'
-import TapAction from './actions/TapAction.js'
 import Edge from './Edge.js'
 import State from './State.js'
 
@@ -47,7 +46,6 @@ class DFSMonkey extends Monkey {
 
     // start loop
     while (this.flag && !(this.curState.fromEdge == null && !this.curState.isNotOver())) {
-      
       if (this.stopFlag) {
         break
       }
@@ -59,7 +57,7 @@ class DFSMonkey extends Monkey {
         continue
       }
 
-      await action.fire()
+      await this.executeAction(action)
 
       const tempNode = await this.getCurrentState()
 
@@ -89,11 +87,11 @@ class DFSMonkey extends Monkey {
   }
 
   async startApp() {
-    await this.restartAction.fire()
+    await this.executeAction(this.restartAction)
   }
 
   async restartApp() {
-    await this.restartAction.fire()
+    await this.executeAction(this.restartAction)
     const rootPa = this.rootState.pkg
     const rootAct = this.rootState.act
     let count = 0
@@ -134,7 +132,7 @@ class DFSMonkey extends Monkey {
       }
       // attempt to one step back
       if (edgesStack.length > 2) {
-        await this.backAction.fire()
+        await this.executeAction(this.backAction)
       }
 
       tempState = await this.getCurrentState()
@@ -214,29 +212,6 @@ class DFSMonkey extends Monkey {
     }
     this.nodeCount++
     this.nodes.push(toState)
-  }
-
-
-  getActions(widgets) {
-    const actions = []
-    _.forEach(widgets, (widget) => {
-      if (widget.enabled === 'false') return
-
-      if (widget.clickable === 'true') {
-        actions.push(new TapAction(this._device, widget))
-      }
-    })
-    return actions
-  }
-
-  async getCurrentState() {
-    const currentActivity = await this.device.getCurrentActivity()
-    const currentPackage = await this.device.getCurrentPackageName()
-    const target = `${this.resultDir}/dumpfile.xml`
-    const dumpfile = await this.device.dumpUI(target)
-    const widgets = await utils.getWidgetsFromXml(dumpfile)
-    const actions = this.getActions(widgets)
-    return new State(currentPackage, currentActivity, widgets, actions)
   }
 }
 
