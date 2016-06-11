@@ -1,6 +1,6 @@
 {
   "name": "nata-dfs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Android travel for nodejs",
   "main": "index.js",
   "scripts": {
