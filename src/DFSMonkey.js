@@ -17,6 +17,12 @@ class DFSMonkey extends Monkey {
 
     this.nodeCount = 0
     this.flag = true
+
+    this.stopFlag = false
+  }
+
+  stop() {
+    this.stopFlag = true
   }
 
 
@@ -41,6 +47,11 @@ class DFSMonkey extends Monkey {
 
     // start loop
     while (this.flag && !(this.curState.fromEdge == null && !this.curState.isNotOver())) {
+      
+      if (this.stopFlag) {
+        break
+      }
+
       const action = this.curState.getNextAction()
 
       if (action === null) {
