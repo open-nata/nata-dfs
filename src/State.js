@@ -1,9 +1,8 @@
 
 class State {
-  constructor(pkg, act, widgets, actions) {
+  constructor(pkg, act, actions) {
     this._pkg = pkg
     this._act = act
-    this._widgets = widgets
     this._actions = actions
 
     this._kind = State.Types.NORMAL
@@ -65,10 +64,6 @@ class State {
     return this._act
   }
 
-  get widgets() {
-    return this._widgets
-  }
-
   get actions() {
     return this._actions
   }
@@ -85,14 +80,14 @@ class State {
     }
     if (this.pkg === oState.pkg
       && this.act === oState.act
-      && this.widgets.length === oState.widgets.length) {
+      && this.actions.length === oState.actions.length) {
       let count = 0
       // search for equal ones
-      for (let i = 0; i < this.widgets.length; i++) {
-        const searchTerm = this.widgets[i]
+      for (let i = 0; i < this.actions.length; i++) {
+        const searchTerm = this.actions[i]
         let index = -1
-        for (let j = 0, len = oState.widgets.length; j < len; j++) {
-          if (oState.widgets[j].equals(searchTerm)) {
+        for (let j = 0, len = oState.actions.length; j < len; j++) {
+          if (oState.actions[j].equals(searchTerm)) {
             index = j
             break
           }
@@ -102,11 +97,10 @@ class State {
         }
       }
 
-      const rate = (count / this.widgets.length)
+      const rate = (count / this.actions.length)
       if (rate < 0.5) {
         return true
       }
-      // console.log(`rate : ${rate}`)
     }
 
     return false

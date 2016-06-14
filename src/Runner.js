@@ -10,8 +10,9 @@ apkparser.parse(apkPath).then((manifest) => {
   const pkg = manifest.packageName
   const act = manifest.entry
   Device.getOnlineDeviceIds() // get online devices
-  .then(ids => {
-    _.forEach(ids, id => {
+  .then(devices=> {
+    _.forEach(devices, device => {
+      const id = device.id
       console.time(`monkey-${id}`)
       const monkey = new DFSMonkey(id, null, pkg, act)
       const result = monkey.result
@@ -24,7 +25,6 @@ apkparser.parse(apkPath).then((manifest) => {
         console.timeEnd(`monkey-${id}`)
       })
       .catch((err) => console.log(err))
-      // monkey.stop()
     })
   })
   .catch((err) => console.log(err))

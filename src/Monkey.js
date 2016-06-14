@@ -1,14 +1,10 @@
 import Device from 'nata-device'
-import StartAppAction from './actions/StartAppAction.js'
-import BackAction from './actions/BackAction.js'
 import apkparser from 'apkparser'
 import path from 'path'
 import fs from 'fs'
 import rimraf from 'rimraf'
 import Result from './Result.js'
 import _ from 'lodash'
-import TapAction from './actions/TapAction.js'
-import * as utils from './utils/index.js'
 import State from './State.js'
 
 
@@ -22,7 +18,7 @@ class Monkey {
     this._restartAction = undefined
     this._deviceId = deviceId
     this._device = new Device(deviceId)
-    this._backAction = new BackAction(this._device)
+    this._backAction = this._device.getBackAction(this._device)
 
     // create results dir
     this._resultDir = path.join(__dirname, `../results`)
@@ -50,7 +46,7 @@ class Monkey {
     // this._apk = await apkparser.parse(this._apkPath, this._apkToolPath)
     // this._pkg = this._apk.packageName
     // this._act = this._apk.entry
-    this._restartAction = new StartAppAction(this._device, this.pkgAct)
+    this._restartAction = this._device.getStartAppAction(this.pkgAct)
 
     this._resultDir = path.join(this._resultDir, `/${this._pkg}`)
 
@@ -116,26 +112,12 @@ class Monkey {
     }
   }
 
-  getActions(widgets) {
-    const actions = []
-    _.forEach(widgets, (widget) => {
-      if (widget.enabled === 'false') return
-
-      if (widget.clickable === 'true') {
-        actions.push(new TapAction(this._device, widget))
-      }
-    })
-    return actions
-  }
-
   async getCurrentState() {
     const currentActivity = await this.device.getCurrentActivity()
     const currentPackage = await this.device.getCurrentPackageName()
-    const target = `${this.resultDir}/dumpfile.xml`
-    const dumpfile = await this.device.dumpUI(target)
-    const widgets = await utils.getWidgetsFromXml(dumpfile)
-    const actions = this.getActions(widgets)
-    const state = new State(currentPackage, currentActivity, widgets, actions)
+    const actions = await this.device.getAvaliableActions()
+
+    const state = new State(currentPackage, currentActivity, actions)
 
     // add state
     this._result.addState(state)
@@ -143,17 +125,9 @@ class Monkey {
     if (currentPackage === this._pkg) {
       this._result.addActivity(currentActivity)
     }
-    // add widget
-    _.forEach(widgets, (widget) => {
-      if (widget.packageName === this._pkg) {
-        this._result.addWidget(widget)
-      }
-    })
 
     return state
   }
-
-
 }
 
 export default Monkey

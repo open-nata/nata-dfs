@@ -26,21 +26,6 @@ class Edge {
     })
   }
 
-  // public String toString() {
-  //     return "ActionEdge{" +
-  //             "fromState=" + fromState +
-  //             ", toState=" + toState +
-  //             ", actions=" + actions +
-  //             '}';
-  // }
-
-  // public String toCommand(){
-  //     String s="";
-  //     for(Action a:actions){
-  //         s+=a.toCommand()+"\n";
-  //     }
-  //     return s;
-  // }
 }
 
 export default Edge
