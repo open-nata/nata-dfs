@@ -9,17 +9,21 @@ const apkPath = path.join(__dirname, '../assets/alogcat.apk')
 apkparser.parse(apkPath).then((manifest) => {
   const pkg = manifest.packageName
   const act = manifest.entry
-  Device.getOnlineDeviceIds() // get online devices
-  .then(devices=> {
+  Device.getOnlineDevices() // get online devices
+  .then((devices) => {
     _.forEach(devices, device => {
       const id = device.id
       console.time(`monkey-${id}`)
-      const monkey = new DFSMonkey(id, null, pkg, act)
-      const result = monkey.result
-      result.on('summary', (summary) => {
-        console.log(summary)
+      const monkey = new DFSMonkey(id, pkg, act, {
+        apkPath,
+        setup: ['CleanData com.cvicse.zhnt',
+          'StartApp com.cvicse.zhnt/.LoadingActivity',
+          'Click @0,75x1080,1776',
+          'Swipe @0,75x1080,1776 LEFT',
+          'Swipe @0,75x1080,1776 LEFT',
+          'Swipe @0,75x1080,1776 LEFT',
+          'Swipe @0,75x1080,1776 LEFT'],
       })
-
       monkey.play().then(() => {
         console.log('done')
         console.timeEnd(`monkey-${id}`)

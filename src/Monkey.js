@@ -9,15 +9,18 @@ import State from './State.js'
 
 
 class Monkey {
-  constructor(deviceId, appPath, pkg, act) {
-    // this._apkPath = path.join(appPath, '/bin/
-    this._apkPath = appPath
-    this._pkg = pkg
-    this._act = act
-    this._apk = undefined
-    this._restartAction = undefined
+  constructor(deviceId, pkg, act, options) {
     this._deviceId = deviceId
     this._device = new Device(deviceId)
+
+    this._pkg = pkg
+    this._act = act
+    this.options = options || {}
+    this._apkPath = options.apkPath || ''
+    this._setup = options.setup || []
+    this._apk = undefined
+    this._restartAction = undefined
+
     this._backAction = this._device.getBackAction(this._device)
 
     // create results dir
@@ -43,9 +46,9 @@ class Monkey {
 
 
   async analyseApk() {
-    // this._apk = await apkparser.parse(this._apkPath, this._apkToolPath)
-    // this._pkg = this._apk.packageName
-    // this._act = this._apk.entry
+    //this._apk = await apkparser.parse(this._apkPath, this._apkToolPath)
+    //this._pkg = this._apk.packageName
+    //this._act = this._apk.entry
     this._restartAction = this._device.getStartAppAction(this.pkgAct)
 
     this._resultDir = path.join(this._resultDir, `/${this._pkg}`)
@@ -58,6 +61,12 @@ class Monkey {
     // create coverage dir
     this._coveragePath = `${this._resultDir}/coverage`
     fs.mkdirSync(this._coveragePath)
+  }
+
+  async setUp() {
+    if (this._setup && this._setup.length > 0) {
+      await this.device.executeActions(this._setup)
+    }
   }
 
   collectCoverage() {

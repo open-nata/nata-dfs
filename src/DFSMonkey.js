@@ -6,8 +6,8 @@ import State from './State.js'
 
 
 class DFSMonkey extends Monkey {
-  constructor(deviceId, appPath, pkg, act) {
-    super(deviceId, appPath, pkg, act)
+  constructor(deviceId, pkg, act, options) {
+    super(deviceId, pkg, act, options)
     this.currentActions = []
     this.nodes = []
 
@@ -37,6 +37,9 @@ class DFSMonkey extends Monkey {
     const ccInterval = this.collectCoverage()
 
     console.log(this.pkgAct)
+
+    await this.setUp()
+
     // start app
     await this.startApp()
     // record current state
