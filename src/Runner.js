@@ -15,7 +15,7 @@ apkparser.parse(apkPath).then((manifest) => {
       const id = device.id
       console.time(`monkey-${id}`)
       const monkey = new DFSMonkey(id, pkg, act, {
-        apkPath,
+        //apkPath,
         setup: ['CleanData com.cvicse.zhnt',
           'StartApp com.cvicse.zhnt/.LoadingActivity',
           'Click @0,75x1080,1776',
@@ -23,7 +23,21 @@ apkparser.parse(apkPath).then((manifest) => {
           'Swipe @0,75x1080,1776 LEFT',
           'Swipe @0,75x1080,1776 LEFT',
           'Swipe @0,75x1080,1776 LEFT'],
+        action_count: 10,
       })
+      const result = monkey.result
+      result.on('summary', (summary) => {
+        console.log(summary)
+      })
+
+      result.on('activity', (activity) => {
+        console.log(activity)
+      })
+
+      result.on('action', (action) => {
+        console.log(action)
+      })
+
       monkey.play().then(() => {
         console.log('done')
         console.timeEnd(`monkey-${id}`)

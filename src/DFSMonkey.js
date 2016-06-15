@@ -16,14 +16,7 @@ class DFSMonkey extends Monkey {
 
     this.nodeCount = 0
     this.flag = true
-
-    this.stopFlag = false
   }
-
-  stop() {
-    this.stopFlag = true
-  }
-
 
   async play() {
     console.log(`Monkey on ${this._deviceId} start playing...`)
@@ -36,8 +29,7 @@ class DFSMonkey extends Monkey {
 
     const ccInterval = this.collectCoverage()
 
-    console.log(this.pkgAct)
-
+    console.log('setup...')
     await this.setUp()
 
     // start app
@@ -49,7 +41,7 @@ class DFSMonkey extends Monkey {
 
     // start loop
     while (this.flag && !(this.curState.fromEdge == null && !this.curState.isNotOver())) {
-      if (this.stopFlag) {
+      if (this._stopFlag) {
         break
       }
 

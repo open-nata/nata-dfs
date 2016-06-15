@@ -15,11 +15,15 @@ class Monkey {
 
     this._pkg = pkg
     this._act = act
+
     this.options = options || {}
     this._apkPath = options.apkPath || ''
     this._setup = options.setup || []
+    this._actionCount = options.action_count || 1000
     this._apk = undefined
     this._restartAction = undefined
+
+    this._stopFlag = false
 
     this._backAction = this._device.getBackAction(this._device)
 
@@ -110,9 +114,17 @@ class Monkey {
     return this._backAction
   }
 
+  stop() {
+    this._stopFlag = true
+  }
+
   async executeAction(action) {
     this._result.addAction(action)
     await action.fire()
+
+    if (this._result.actionList.length > this._actionCount) {
+      this.stop()
+    }
   }
 
   async executeActions(actions) {
