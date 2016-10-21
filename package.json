@@ -7,7 +7,8 @@
     "natadfs": "bin/natadfs"
   },
   "scripts": {
-    "compile": "babel --watch -d lib/ src/",
+    "compile": "babel -d lib/ src/",
+    "dev": "babel --watch -d lib/ src/",
     "test": "npm run compile && mocha -t 10000 --compilers js:babel-core/register $(find test -name '*.test.js')",
     "prepublish": "npm run compile"
   },
