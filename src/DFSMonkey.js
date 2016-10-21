@@ -6,8 +6,8 @@ import State from './State.js'
 
 
 class DFSMonkey extends Monkey {
-  constructor(deviceId, pkg, act, options) {
-    super(deviceId, pkg, act, options)
+  constructor(device, pkg, act, setup, limit, resultDir) {
+    super(device, pkg, act, setup, limit, resultDir)
     this.currentActions = []
     this.nodes = []
 
@@ -19,19 +19,10 @@ class DFSMonkey extends Monkey {
   }
 
   async play() {
-    console.log(`Monkey on ${this._deviceId} start playing...`)
-    // analyse the apk to run
-    console.log('analysing apk...')
-    await this.analyseApk()
+    console.log(`Monkey start playing...`)
     // install apk in the device
-    console.log('installing apk...')
-    await this.installApk()
-
     const ccInterval = this.collectCoverage()
-
-    console.log('setup...')
     await this.setUp()
-
     // start app
     await this.startApp()
     // record current state

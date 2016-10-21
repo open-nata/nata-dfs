@@ -1,3 +1,3 @@
-import DFSMonkey from './DFSMonkey.js'
+import Generator from './Generator.js'
 
-export default DFSMonkey
+export default Generator

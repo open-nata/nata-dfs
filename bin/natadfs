@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+const program = require('commander')
+const Device = require('nata-device')
+const apkparser = require('apkparser')
+const co = require('co')
+const chalk = require('chalk')
+const Generator = require('../')
+
+const generator = new Generator()
+
+program
+  .version(require('../package.json').version)
+  .option('-p, --apk-path <apk>', 'absolute apk path, if set we will parse the apk and install')
+  .option('-n, --number <num>', `set limited actions number, default to 1000`, 1000)
+  .option('-p, --pkg <pkg>', 'specify the package name')
+  .option('-e, --entry <entry>', 'specify the starting activity entry')
+  .option('-d, --directory <directory>', 'specify the running directory, default to be <results> in the package')
+  .option('--device <device>', 'specify the runnging device id, default to run on all connected devices')
+  .option('--verbose', 'show more running information')
+  .parse(process.argv)
+
+function *run() {
+  if (program.apkPath) {
+    console.log(chalk.blue(`Start parsing ${program.apkPath}...`))
+    const manifest = yield apkparser.parse(program.apkPath)
+    generator.pkg(manifest.packageName)
+    generator.entry(manifest.entry)
+    generator.apkPath(program.apkPath)
+    console.log(chalk.blue(`Finished, package: <${manifest.packageName}>, entry: <${manifest.entry}>`))
+  }
+
+  // use specified pkg and act for first priority
+  if (program.pkg) {
+    console.log(chalk.blue(`Using specified pkg ${program.pkg}`))
+    generator.pkg(program.pkg)
+  }
+
+  if (program.entry) {
+    console.log(chalk.blue(`Using specified act ${program.pkg}`))
+    generator.entry(program.entry)
+  }
+
+  if (!program.apkPath && !(program.pkg && program.entry)) {
+    console.log(chalk.red(`Please specify apkpath or <act & pkg>`))
+    return
+  }
+
+  if (program.verbose) {
+    generator.verbose(true);
+  }
+
+  if (program.device) {
+    console.log(chalk.blue(`Using specified device ${program.device}`))
+    generator.devices([program.device])
+  } else {
+    const devices = (yield Device.getOnlineDevices()).map((device) => {
+      return device.id
+    })
+    generator.devices(devices)
+    console.log(chalk.blue(`Runing on connected devices ${JSON.stringify(devices)}`))
+  }
+  yield generator.run()
+}
+
+co(run)
+
+// /Users/Calvin/Develop/githubs/open-nata/nata-dfs/assets/alogcat.apk

@@ -1,70 +1,31 @@
-import Device from 'nata-device'
-import apkparser from 'apkparser'
-import path from 'path'
 import fs from 'fs'
-import rimraf from 'rimraf'
 import Result from './Result.js'
-import _ from 'lodash'
 import State from './State.js'
 
-
 class Monkey {
-  constructor(deviceId, pkg, act, options) {
-    this._deviceId = deviceId
-    this._device = new Device(deviceId)
-
+  constructor(device, pkg, act, setup, limit, resultDir) {
+    this._device = device
     this._pkg = pkg
     this._act = act
-
-    this.options = options || {}
-    this._apkPath = options.apkPath || ''
-    this._setup = options.setup || []
-    this._actionCount = options.action_count || 1000
-    this._apk = undefined
-    this._restartAction = undefined
-
+    this._setup = setup || []
+    this._actionCount = limit || 1000
+    this._resultDir = resultDir
+    this._restartAction = this._device.getStartAppAction(`${this._pkg}/${this._act}`)
     this._stopFlag = false
-
     this._backAction = this._device.getBackAction(this._device)
-
-    // create results dir
-    this._resultDir = path.join(__dirname, `../results`)
-    if (!fs.existsSync(this._resultDir)) {
-      fs.mkdirSync(this._resultDir)
-    }
-    this._resultDir = path.join(__dirname, `../results/${this._deviceId}`)
-
-    if (!fs.existsSync(this._resultDir)) {
-      fs.mkdirSync(this._resultDir)
-    }
-    // create apktool dir
-    this._apkToolPath = `${this._resultDir}/apktool`
-
     this._result = new Result()
+    this.createCoverage()
   }
-
 
   get result() {
     return this._result
   }
 
-
-  async analyseApk() {
-    //this._apk = await apkparser.parse(this._apkPath, this._apkToolPath)
-    //this._pkg = this._apk.packageName
-    //this._act = this._apk.entry
-    this._restartAction = this._device.getStartAppAction(this.pkgAct)
-
-    this._resultDir = path.join(this._resultDir, `/${this._pkg}`)
-
-    if (fs.existsSync(this._resultDir)) {
-      rimraf.sync(this._resultDir)
-    }
-
-    fs.mkdirSync(this._resultDir)
-    // create coverage dir
+  createCoverage() {
     this._coveragePath = `${this._resultDir}/coverage`
-    fs.mkdirSync(this._coveragePath)
+    if (!fs.existsSync(this._coveragePath)) {
+      fs.mkdirSync(this._coveragePath)
+    }
   }
 
   async setUp() {
@@ -80,22 +41,12 @@ class Monkey {
     }, 10000)
   }
 
-  async installApk() {
-    if (this._apkPath) {
-      await this._device.install(this._apkPath)
-    }
-  }
-
   get apkPath() {
     return this._apkPath
   }
 
   get resultDir() {
     return this._resultDir
-  }
-
-  get pkgAct() {
-    return `${this._pkg}/${this._act}`
   }
 
   get pkg() {
